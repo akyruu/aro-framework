@@ -13,19 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.avaryuon.fwk.resource;
+package com.avaryuon.fwk.util;
 
-import javax.inject.Singleton;
+import java.util.Arrays;
 
 /**
- * <b>Manager file in ARO application</b>
- * <p>If you add folders, use application config.</p>
+ * Contains utility methods for arrays. Don't instantiate.
  * 
  * @author Akyruu (akyruu@hotmail.com)
  * @version 0.1
  */
-@Singleton
-public class FileManager {
+public final class ArrayUtils {
 	/* STATIC FIELDS ======================================================= */
 	// Nothing here
 
@@ -33,8 +31,32 @@ public class FileManager {
 	// Nothing here
 
 	/* CONSTRUCTORS ======================================================== */
-	// Nothing here	
+	private ArrayUtils() {
+		// Nothing to do
+	}
 
 	/* METHODS ============================================================= */
-	// Nothing here
+	/**
+	 * Push an item in array.
+	 * <p>
+	 * Copy and resize, with one case, array in parameter and add item in last
+	 * case.
+	 * </p>
+	 * 
+	 * @param array
+	 *            Array to add item.
+	 * @param item
+	 *            Item to push in array.
+	 * 
+	 * @return Resized array.
+	 */
+	public static < G, T extends G > G[] push( G[] array, T item ) {
+		// Add case in array
+		int index = array.length;
+		G[] resizedArray = Arrays.copyOf( array, index + 1 );
+
+		// Set item in last place and return resized array
+		resizedArray[ index ] = item;
+		return resizedArray;
+	}
 }
