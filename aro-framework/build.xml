@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="generate-schema" default="generate-schema" basedir=".">
+	<!-- Initialize JAXB -->
+	<property name="jaxb.home" value="D:/Windows/dev/jaxb-ri/2.2.11" />
+	<path id="classpath">
+		<fileset dir="${jaxb.home}" includes="lib/*.jar" />
+	</path>
+
+	<!-- Task definitions -->
+	<taskdef name="schemagen" classname="com.sun.tools.jxc.SchemaGenTask">
+		<classpath refid="classpath" />
+	</taskdef>
+
+	<!-- Targets -->
+	<property name="source.dir" value="src/main/java" />
+	<property name="dest.dir" value="src/main/resources/schemas" />
+	
+	<target name="generate-schema">
+		<mkdir dir="${dest.dir}"/>
+		<schemagen srcdir="${source.dir}" destdir="${dest.dir}">
+			<include name="**/*Config.java" />
+			<!--<schema file="config.xsd" namespace="http://www.avaryuon.com/config" /-->
+			<!--exclude name="**/test/**" /-->
+		</schemagen>
+	</target>
+</project>

@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
 
 import com.avaryuon.fwk.bean.BeanManager;
 import com.avaryuon.fwk.config.ConfigManager;
-import com.avaryuon.fwk.resource.ResourceManager;
 import com.avaryuon.fwk.util.RuntimeUtils;
 import com.avaryuon.fwk.util.fx.AlertUtils;
 
@@ -52,7 +51,8 @@ public abstract class AroApplication extends Application {
 	private static final String DEFAULT_TITLE = "ARO application";
 
 	/* Logging ------------------------------------------------------------- */
-	private static final Logger LOGGER = LoggerFactory.getLogger( "ARO" );
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger( AroApplication.class );
 
 	/* FIELDS ============================================================== */
 	/* Singleton ----------------------------------------------------------- */
@@ -60,6 +60,7 @@ public abstract class AroApplication extends Application {
 	private FileLock lock;
 
 	/* Properties ---------------------------------------------------------- */
+	@Getter
 	private String title;
 
 	/* Java FX ------------------------------------------------------------- */
@@ -68,7 +69,6 @@ public abstract class AroApplication extends Application {
 
 	/* Beans --------------------------------------------------------------- */
 	private ConfigManager configMgr;
-	private ResourceManager resourceMgr;
 
 	/* CONSTRUCTORS ======================================================== */
 	protected AroApplication() {
@@ -80,25 +80,37 @@ public abstract class AroApplication extends Application {
 
 	/* METHODS ============================================================= */
 	/* Life-cycle ---------------------------------------------------------- */
+	/* Initialization */
 	@Override
 	public final void init() throws Exception {
-		LOGGER.info( "Initialize ARO application" );
+		LOGGER.info( "Initialize application..." );
 
 		// Gets bean from manager (this is not instantiate via injection)
 		BeanManager beanMgr = BeanManager.instance();
 		configMgr = beanMgr.getBean( ConfigManager.class );
-		resourceMgr = beanMgr.getBean( ResourceManager.class );
 
 		// Initialize properties
 		title = configMgr.getProperty( "app", "title", DEFAULT_TITLE );
+
+		onInit();
+		LOGGER.info( "Application is initialized !" );
 	}
 
+	/**
+	 * Called at the end of init(). Overrides this method for initialize your
+	 * application.
+	 */
+	protected void onInit() throws Exception {
+		// Nothing to do
+	}
+
+	/* Starting */
 	/**
 	 * @see javafx.application.Application#start(javafx.stage.Stage)
 	 */
 	@Override
 	public final void start( Stage primaryStage ) throws Exception {
-		LOGGER.info( "Start {0}...", title );
+		LOGGER.info( "Start {}...", title );
 
 		// Check if this application is not already started
 		if( checkSingletonInstance() ) {
@@ -107,16 +119,34 @@ public abstract class AroApplication extends Application {
 			mainStage.setTitle( title );
 			mainStage.show();
 
-			LOGGER.info( "{0} is started !", title );
+			LOGGER.info( "{} is started !", title );
 		}
 	}
 
+	/**
+	 * Called at the end of start(), before mainStage.show(). Overrides this
+	 * method for start your application.
+	 */
+	protected void onStart() throws Exception {
+		// Nothing to do
+	}
+
+	/* Stopping */
 	/**
 	 * @see javafx.application.Application#stop()
 	 */
 	@Override
 	public final void stop() throws Exception {
-		LOGGER.info( "Stop {0}...", title );
+		LOGGER.info( "Stop {}...", title );
+		onStop();
+	}
+
+	/**
+	 * Called at the start of stop(). Overrides this method for stop your
+	 * application.
+	 */
+	protected void onStop() throws Exception {
+		// Nothing to do
 	}
 
 	/* Singleton ----------------------------------------------------------- */
@@ -148,12 +178,12 @@ public abstract class AroApplication extends Application {
 				} catch( IOException ex ) {
 					LOGGER.error( "Unlock application failed.", ex );
 				}
-				LOGGER.info( "{0} is stopped.", title );
+				LOGGER.info( "{} is stopped.", title );
 			} );
 		} else {
 			AlertUtils.showInfo( title, null,
 					"The application is already running." );
-			LOGGER.info( "{0} is stopped.", title );
+			LOGGER.info( "{} is stopped !", title );
 		}
 
 		return success;

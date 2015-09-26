@@ -17,6 +17,8 @@ package com.avaryuon.fwk.bean;
 
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <b>Manages bean in ARO application.</b>
@@ -32,6 +34,10 @@ public class BeanManager {
 	/* Singleton ----------------------------------------------------------- */
 	private static BeanManager instance;
 
+	/* Logging ------------------------------------------------------------- */
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger( BeanManager.class );
+
 	/* FIELDS ============================================================== */
 	/* Injection ----------------------------------------------------------- */
 	private final Weld weld;
@@ -39,6 +45,8 @@ public class BeanManager {
 
 	/* CONSTRUCTORS ======================================================== */
 	private BeanManager() {
+		LOGGER.info( "Initialize bean manager..." );
+
 		// Initialize injection fields
 		weld = new Weld();
 		container = weld.initialize();
@@ -50,6 +58,8 @@ public class BeanManager {
 				weld.shutdown();
 			}
 		} );
+
+		LOGGER.info( "Bean manager is initialized !" );
 	}
 
 	/* METHODS ============================================================= */

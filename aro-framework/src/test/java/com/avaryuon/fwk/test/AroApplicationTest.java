@@ -13,38 +13,50 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.avaryuon.fwk.bean;
+package com.avaryuon.fwk.test;
 
-import javax.annotation.Resource;
-import javax.enterprise.inject.Produces;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import org.junit.Before;
+import org.junit.Test;
 
 import com.avaryuon.fwk.AroApplication;
 
 /**
- * Specific bean want to be call with BeanManager.
+ * Tests for AroApplication.
  * 
  * @author Akyruu (akyruu@hotmail.com)
  * @version 0.1
  */
-@Resource
-public class BeanResource {
+public class AroApplicationTest extends AroApplication {
 	/* STATIC FIELDS ======================================================= */
 	// Nothing here
 
 	/* FIELDS ============================================================== */
-	// Nothing here
+	private boolean initialized;
 
 	/* CONSTRUCTORS ======================================================== */
-	// Nothing here
+	public AroApplicationTest() {
+		initialized = false;
+	}
 
 	/* METHODS ============================================================= */
-	@Produces
-	public AroApplication getAroApplication() {
-		return AroApplication.instance();
+	/* Set-up -------------------------------------------------------------- */
+	@Before
+	public void setUp() throws Exception {
+		if( !initialized ) {
+			init();
+			initialized = true;
+		}
 	}
 
-	@Produces
-	public BeanManager getBeanManager() {
-		return BeanManager.instance();
+	/* Tests --------------------------------------------------------------- */
+	@Test
+	public void testTitle() {
+		String title = getTitle();
+		assertNotNull( "Title is null", title );
+		assertEquals( "ARO Framework Test", title );
 	}
+
 }

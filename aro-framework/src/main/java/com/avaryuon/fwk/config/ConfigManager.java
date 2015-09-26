@@ -26,8 +26,10 @@ import javax.inject.Singleton;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
 import com.avaryuon.fwk.AroApplication;
+import com.avaryuon.fwk.util.io.XmlUtils;
 
 /**
  * <b>Manager configuration files, properties and preferences in ARO
@@ -38,8 +40,8 @@ import com.avaryuon.fwk.AroApplication;
  * <p>
  * Lists of specific property group :
  * <ul>
- * <li>system: call System.getProperty()</li>
- * <li>app: replaced by 'application'</li>
+ * <li>'system': call System.getProperty()</li>
+ * <li>'app' : shortcut for 'application'</li>
  * </ul>
  * </p>
  * 
@@ -53,12 +55,13 @@ public class ConfigManager {
 	private static final String CONFIG_FILE_NAME = "/META-INF/aro-config.xml";
 
 	/* Properties ---------------------------------------------------------- */
-	private static final String SYSTEM_GROUP_NAME = "system";
-	private static final String APP_GROUP_NAME = "app";
-	private static final String APPLICATION_GROUP_NAME = "application";
+	private static final String SYSTEM_GROUP = "system";
+	private static final String APP_GROUP = "app";
+	private static final String APPLICATION_GROUP = "application";
 
 	/* Logging ------------------------------------------------------------- */
-	private static final Logger LOGGER = LoggerFactory.getLogger( "ARO" );
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger( ConfigManager.class );
 
 	/* FIELDS ============================================================== */
 	/* Properties ---------------------------------------------------------- */
@@ -69,7 +72,30 @@ public class ConfigManager {
 	private AroApplication app;
 
 	/* CONSTRUCTORS ======================================================== */
-	// Nothing here
+	/* Initialization ------------------------------------------------------ */
+	@PostConstruct
+	void initialize() {
+		LOGGER.info( "Initialize configuration manager..." );
+
+		/* Properties */
+		propertyGroups = new HashMap<>();
+
+		InputStream configFileStream = app.getClass().getResourceAsStream(
+				CONFIG_FILE_NAME );
+		if( configFileStream != null ) {
+			LOGGER.warn( "Config file found: " + CONFIG_FILE_NAME );
+			try {
+				XmlUtils.parseXmlFile( configFileStream, new ConfigHandler(
+						propertyGroups ) );
+			} catch( SAXException ex ) {
+				LOGGER.warn( "Could not parse config file", ex );
+			}
+		} else {
+			LOGGER.warn( "Config file not found: " + CONFIG_FILE_NAME );
+		}
+
+		LOGGER.info( "Configuration manager is initialized !" );
+	}
 
 	/* METHODS ============================================================= */
 	/* Properties ---------------------------------------------------------- */
@@ -105,10 +131,10 @@ public class ConfigManager {
 	public String getProperty( String group, String name, String defaultValue ) {
 		String property = null;
 
-		if( SYSTEM_GROUP_NAME.equals( name ) ) {
+		if( SYSTEM_GROUP.equals( name ) ) {
 			property = System.getProperty( name );
 		} else {
-			String realGroup = APP_GROUP_NAME.equals( group ) ? APPLICATION_GROUP_NAME
+			String realGroup = APP_GROUP.equals( group ) ? APPLICATION_GROUP
 					: group;
 			Properties properties = propertyGroups.get( realGroup );
 			property = (properties == null) ? defaultValue : properties
@@ -117,20 +143,4 @@ public class ConfigManager {
 
 		return property;
 	}
-
-	/* SINGLETON =========================================================== */
-	@PostConstruct
-	void initialize() {
-		/* Properties */
-		propertyGroups = new HashMap<>();
-
-		InputStream configFileStream = app.getClass().getResourceAsStream(
-				CONFIG_FILE_NAME );
-		if( configFileStream != null ) {
-			// TODO read configuration file
-		} else {
-			LOGGER.warn( "Config file not found: " + CONFIG_FILE_NAME );
-		}
-	}
-
 }

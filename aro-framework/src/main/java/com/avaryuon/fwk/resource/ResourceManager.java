@@ -17,6 +17,7 @@ package com.avaryuon.fwk.resource;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
@@ -27,6 +28,10 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.avaryuon.fwk.AroApplication;
 import com.avaryuon.fwk.config.ConfigManager;
 import com.avaryuon.fwk.util.ArrayUtils;
 
@@ -47,7 +52,14 @@ import com.avaryuon.fwk.util.ArrayUtils;
 @Singleton
 public class ResourceManager {
 	/* STATIC FIELDS ======================================================= */
+	/* Paths --------------------------------------------------------------- */
 	private static final String RESOURCES_FOLDER_NAME = "resources";
+
+	/* Logging ------------------------------------------------------------- */
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger( ResourceManager.class );
+
+	private static final String RESOURCE_FOUND_LOG = "Resource found: {}";
 
 	/* FIELDS ============================================================== */
 	/* Resources ----------------------------------------------------------- */
@@ -55,10 +67,55 @@ public class ResourceManager {
 
 	/* Beans --------------------------------------------------------------- */
 	@Inject
+	private AroApplication app;
+
+	@Inject
 	private ConfigManager configMgr;
 
 	/* CONSTRUCTORS ======================================================== */
-	// Nothing here
+	/* Initialization ------------------------------------------------------ */
+	@PostConstruct
+	void initialize() throws IOException {
+		LOGGER.info( "Initialize resources manager..." );
+
+		URL[] resourceURLs = new URL[0];
+
+		/* Paths */
+		Path installResourceFolder = Paths.get( RESOURCES_FOLDER_NAME + "/" );
+		if( isValidFolder( installResourceFolder ) ) {
+			URL resourceURL = format( installResourceFolder.toUri().toURL() );
+			resourceURLs = ArrayUtils.push( resourceURLs, resourceURL );
+			LOGGER.info( RESOURCE_FOUND_LOG, resourceURL );
+		}
+
+		String appTitle = configMgr.getProperty( "app", "title" );
+		if( appTitle != null ) {
+			Path userResourceFolder = Paths.get(
+					configMgr.getProperty( "system", "user.home" ), "."
+							+ appTitle.toLowerCase() + "/" );
+			if( isValidFolder( userResourceFolder ) ) {
+				URL resourceURL = userResourceFolder.toUri().toURL();
+				resourceURLs = ArrayUtils.push( resourceURLs, resourceURL );
+				LOGGER.info( RESOURCE_FOUND_LOG, resourceURL );
+			}
+		}
+
+		URL jarResourceURL = app.getClass().getResource(
+				"/" + RESOURCES_FOLDER_NAME );
+		if( jarResourceURL != null ) {
+			jarResourceURL = format( jarResourceURL );
+			resourceURLs = ArrayUtils.push( resourceURLs, jarResourceURL );
+			LOGGER.info( RESOURCE_FOUND_LOG, jarResourceURL );
+		}
+
+		/* Resources */
+		if( resourceURLs.length == 0 ) {
+			LOGGER.info( "No resources found." );
+		}
+		loader = new URLClassLoader( resourceURLs );
+
+		LOGGER.info( "Resources manager is initialized !" );
+	}
 
 	/* METHODS ============================================================= */
 	/* Resources ----------------------------------------------------------- */
@@ -71,37 +128,14 @@ public class ResourceManager {
 		return loader.getResourceAsStream( name );
 	}
 
-	/* SINGLETON =========================================================== */
-	@PostConstruct
-	void initialize() throws IOException {
-		URL[] resourceURLs = new URL[0];
-
-		/* Paths */
-		Path installResourceFolder = Paths.get( ".", RESOURCES_FOLDER_NAME );
-		if( isValidFolder( installResourceFolder ) ) {
-			ArrayUtils.push( resourceURLs, installResourceFolder.toUri()
-					.toURL() );
-		}
-
-		String appTitle = configMgr.getProperty( "app", "title" );
-		Path userResourceFolder = Paths.get( System.getProperty( "user.home" ),
-				"." + appTitle );
-		if( isValidFolder( userResourceFolder ) ) {
-			ArrayUtils.push( resourceURLs, userResourceFolder.toUri().toURL() );
-		}
-
-		URLClassLoader sysLoader = (URLClassLoader) ClassLoader
-				.getSystemClassLoader();
-		URL jarResourceURL = new URL( sysLoader.getURLs()[ 0 ]
-				+ RESOURCES_FOLDER_NAME );
-		ArrayUtils.push( resourceURLs, jarResourceURL );
-
-		/* Resources */
-		loader = new URLClassLoader( resourceURLs );
-	}
-
 	/* TOOLS =============================================================== */
 	private boolean isValidFolder( Path dir ) {
 		return Files.exists( dir ) && Files.isDirectory( dir );
+	}
+
+	private URL format( URL url ) throws MalformedURLException {
+		String externalForm = url.toExternalForm();
+		return externalForm.endsWith( "/" ) ? url
+				: new URL( externalForm + "/" );
 	}
 }
