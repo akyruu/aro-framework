@@ -13,15 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.avaryuon.fwk.test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import org.junit.Before;
-import org.junit.Test;
+package com.avaryuon.fwk.test.technical;
 
 import com.avaryuon.fwk.AroApplication;
+import com.avaryuon.fwk.test.FXTestCase;
 
 /**
  * Tests for AroApplication.
@@ -29,32 +24,20 @@ import com.avaryuon.fwk.AroApplication;
  * @author Akyruu (akyruu@hotmail.com)
  * @version 0.1
  */
-public class AroApplicationTest extends AroApplication {
+public class AroApplicationTest extends FXTestCase {
 	/* STATIC FIELDS ======================================================= */
 	// Nothing here
 
 	/* FIELDS ============================================================== */
-	private boolean initialized;
-
+	// Nothing here
+	
 	/* CONSTRUCTORS ======================================================== */
-	public AroApplicationTest() {
-		initialized = false;
-	}
+	// Nothing here
 
 	/* METHODS ============================================================= */
-	/* Set-up -------------------------------------------------------------- */
-	@Before
-	public void setUp() throws Exception {
-		if( !initialized ) {
-			init();
-			initialized = true;
-		}
-	}
-
 	/* Tests --------------------------------------------------------------- */
-	@Test
 	public void testTitle() {
-		String title = getTitle();
+		String title = AroApplication.instance().getTitle();
 		assertNotNull( "Title is null", title );
 		assertEquals( "ARO Framework Test", title );
 	}

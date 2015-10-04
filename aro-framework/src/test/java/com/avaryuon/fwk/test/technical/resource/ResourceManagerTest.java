@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.avaryuon.fwk.resource.test;
+package com.avaryuon.fwk.test.technical.resource;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,11 +21,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 
-import junit.framework.TestCase;
-
 import com.avaryuon.fwk.bean.BeanManager;
 import com.avaryuon.fwk.resource.ResourceManager;
-import com.avaryuon.fwk.test.AroApplicationTest;
+import com.avaryuon.fwk.test.FXTestCase;
 
 /**
  * Tests for ResourceManager.
@@ -33,7 +31,7 @@ import com.avaryuon.fwk.test.AroApplicationTest;
  * @author Akyruu (akyruu@hotmail.com)
  * @version 0.1
  */
-public class ResourceManagerTest extends TestCase {
+public class ResourceManagerTest extends FXTestCase {
 	/* STATIC FIELDS ======================================================= */
 	// Nothing here
 
@@ -46,8 +44,7 @@ public class ResourceManagerTest extends TestCase {
 	/* METHODS ============================================================= */
 	/* Set-up -------------------------------------------------------------- */
 	@Override
-	protected void setUp() throws Exception {
-		new AroApplicationTest();
+	public void setUpBeans() {
 		resourceMgr = BeanManager.instance().getBean( ResourceManager.class );
 	}
 

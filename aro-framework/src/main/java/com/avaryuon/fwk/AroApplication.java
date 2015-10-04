@@ -21,6 +21,7 @@ import java.io.RandomAccessFile;
 import java.nio.channels.FileLock;
 
 import javafx.application.Application;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -64,8 +65,11 @@ public abstract class AroApplication extends Application {
 	private String title;
 
 	/* Java FX ------------------------------------------------------------- */
-	@Getter(AccessLevel.PACKAGE)
+	@Getter(AccessLevel.PROTECTED)
 	private Stage mainStage;
+
+	@Getter(AccessLevel.PROTECTED)
+	private Scene scene;
 
 	/* Beans --------------------------------------------------------------- */
 	private ConfigManager configMgr;
@@ -117,6 +121,9 @@ public abstract class AroApplication extends Application {
 			// Prepare and show window
 			mainStage = primaryStage;
 			mainStage.setTitle( title );
+
+			// Start and show
+			onStart();
 			mainStage.show();
 
 			LOGGER.info( "{} is started !", title );
