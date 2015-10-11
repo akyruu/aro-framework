@@ -42,7 +42,7 @@ public class TestApplication extends AroApplication {
 	/* METHODS ============================================================= */
 	/* Access -------------------------------------------------------------- */
 	public Parent getRoot() {
-		Scene scene = getScene();
+		Scene scene = getMainStage().getScene();
 		return (scene == null) ? null : scene.getRoot();
 	}
 

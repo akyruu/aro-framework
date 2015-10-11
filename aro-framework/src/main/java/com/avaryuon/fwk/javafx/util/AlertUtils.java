@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.avaryuon.fwk.util.fx;
+package com.avaryuon.fwk.javafx.util;
 
 import java.util.Optional;
 
@@ -41,6 +41,11 @@ public final class AlertUtils {
 
 	/* METHODS ============================================================= */
 	/* Showing ------------------------------------------------------------- */
+	public static Optional< ButtonType > showConfirm( String title,
+			String headerText, String contentText ) {
+		return show( AlertType.CONFIRMATION, title, headerText, contentText );
+	}
+
 	public static Optional< ButtonType > showInfo( String title,
 			String headerText, String contentText ) {
 		return show( AlertType.INFORMATION, title, headerText, contentText );

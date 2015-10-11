@@ -30,14 +30,14 @@ public class AroApplicationTest extends FXTestCase {
 
 	/* FIELDS ============================================================== */
 	// Nothing here
-	
+
 	/* CONSTRUCTORS ======================================================== */
 	// Nothing here
 
 	/* METHODS ============================================================= */
 	/* Tests --------------------------------------------------------------- */
 	public void testTitle() {
-		String title = AroApplication.instance().getTitle();
+		String title = AroApplication.instance().getTitle().getBase();
 		assertNotNull( "Title is null", title );
 		assertEquals( "ARO Framework Test", title );
 	}

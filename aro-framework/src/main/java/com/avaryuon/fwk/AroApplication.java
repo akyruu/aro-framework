@@ -31,8 +31,8 @@ import org.slf4j.LoggerFactory;
 
 import com.avaryuon.fwk.bean.BeanManager;
 import com.avaryuon.fwk.config.ConfigManager;
+import com.avaryuon.fwk.javafx.util.AlertUtils;
 import com.avaryuon.fwk.util.RuntimeUtils;
-import com.avaryuon.fwk.util.fx.AlertUtils;
 
 /**
  * <b>Define an ARO application</b>
@@ -48,9 +48,6 @@ public abstract class AroApplication extends Application {
 	/* Singleton ----------------------------------------------------------- */
 	private static AroApplication instance;
 
-	/* Properties ---------------------------------------------------------- */
-	private static final String DEFAULT_TITLE = "ARO application";
-
 	/* Logging ------------------------------------------------------------- */
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger( AroApplication.class );
@@ -62,14 +59,11 @@ public abstract class AroApplication extends Application {
 
 	/* Properties ---------------------------------------------------------- */
 	@Getter
-	private String title;
+	private AroTitle title;
 
 	/* Java FX ------------------------------------------------------------- */
 	@Getter(AccessLevel.PROTECTED)
 	private Stage mainStage;
-
-	@Getter(AccessLevel.PROTECTED)
-	private Scene scene;
 
 	/* Beans --------------------------------------------------------------- */
 	private ConfigManager configMgr;
@@ -83,6 +77,11 @@ public abstract class AroApplication extends Application {
 	}
 
 	/* METHODS ============================================================= */
+	/* Scene --------------------------------------------------------------- */
+	public void loadScene( Scene scene ) {
+		mainStage.setScene( scene );
+	}
+
 	/* Life-cycle ---------------------------------------------------------- */
 	/* Initialization */
 	@Override
@@ -94,7 +93,8 @@ public abstract class AroApplication extends Application {
 		configMgr = beanMgr.getBean( ConfigManager.class );
 
 		// Initialize properties
-		title = configMgr.getProperty( "app", "title", DEFAULT_TITLE );
+		String titleBase = configMgr.getProperty( "app", "title" );
+		title = new AroTitle( titleBase );
 
 		onInit();
 		LOGGER.info( "Application is initialized !" );
@@ -120,7 +120,10 @@ public abstract class AroApplication extends Application {
 		if( checkSingletonInstance() ) {
 			// Prepare and show window
 			mainStage = primaryStage;
-			mainStage.setTitle( title );
+			mainStage.setTitle( title.getValue() );
+			title.getProperty().addListener(
+					( observable, oldValue, newValue ) -> mainStage
+							.setTitle( newValue ) );
 
 			// Start and show
 			onStart();
@@ -158,8 +161,9 @@ public abstract class AroApplication extends Application {
 
 	/* Singleton ----------------------------------------------------------- */
 	/* Instance */
-	public static AroApplication instance() {
-		return instance;
+	@SuppressWarnings("unchecked")
+	public static < A extends AroApplication > A instance() {
+		return (A) instance;
 	}
 
 	/* Locking */
@@ -188,7 +192,7 @@ public abstract class AroApplication extends Application {
 				LOGGER.info( "{} is stopped.", title );
 			} );
 		} else {
-			AlertUtils.showInfo( title, null,
+			AlertUtils.showInfo( title.getBase(), null,
 					"The application is already running." );
 			LOGGER.info( "{} is stopped !", title );
 		}

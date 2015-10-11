@@ -23,6 +23,7 @@ import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.Normalizer;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -92,7 +93,7 @@ public class ResourceManager {
 		if( appTitle != null ) {
 			Path userResourceFolder = Paths.get(
 					configMgr.getProperty( "system", "user.home" ), "."
-							+ appTitle.toLowerCase() + "/" );
+							+ formatTitle( appTitle ) + "/" );
 			if( isValidFolder( userResourceFolder ) ) {
 				URL resourceURL = userResourceFolder.toUri().toURL();
 				resourceURLs = ArrayUtils.push( resourceURLs, resourceURL );
@@ -137,5 +138,12 @@ public class ResourceManager {
 		String externalForm = url.toExternalForm();
 		return externalForm.endsWith( "/" ) ? url
 				: new URL( externalForm + "/" );
+	}
+
+	private String formatTitle( String title ) {
+		String formattedTitle = title.toLowerCase().replaceAll( "\\W", "" );
+		formattedTitle = Normalizer.normalize( title, Normalizer.Form.NFD );
+		formattedTitle = formattedTitle.replaceAll( "[^\\p{ASCII}]", "" );
+		return formattedTitle;
 	}
 }

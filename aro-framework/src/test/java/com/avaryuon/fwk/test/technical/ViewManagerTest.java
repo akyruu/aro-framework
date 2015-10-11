@@ -19,8 +19,9 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 
-import com.avaryuon.fwk.ViewManager;
 import com.avaryuon.fwk.bean.BeanManager;
+import com.avaryuon.fwk.javafx.View;
+import com.avaryuon.fwk.javafx.ViewManager;
 import com.avaryuon.fwk.test.FXTestCase;
 
 /**
@@ -31,15 +32,15 @@ import com.avaryuon.fwk.test.FXTestCase;
  */
 public class ViewManagerTest extends FXTestCase {
 	/* TYPES =============================================================== */
-	public static class Exists {
+	public static class Exists extends View {
 		// Nothing here
 	}
 
-	public static class NotExists {
+	public static class NotExists extends View {
 		// Nothing here
 	}
 
-	public static class NoCompliance {
+	public static class NoCompliance extends View {
 		// Nothing here
 	}
 

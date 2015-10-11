@@ -15,15 +15,13 @@
  */
 package com.avaryuon.fwk.util;
 
-import org.slf4j.Logger;
-
 /**
- * Contains utility methods for log messages. Don't instantiate.
+ * Contains utility methods for strings. Don't instantiate.
  * 
  * @author Akyruu (akyruu@hotmail.com)
  * @version 0.1
  */
-public final class LogUtils {
+public final class StringUtils {
 	/* STATIC FIELDS ======================================================= */
 	// Nothing here
 
@@ -31,33 +29,23 @@ public final class LogUtils {
 	// Nothing here
 
 	/* CONSTRUCTORS ======================================================== */
-	private LogUtils() {
+	private StringUtils() {
 		// Nothing to do
 	}
 
 	/* METHODS ============================================================= */
-	/* Logging ------------------------------------------------------------- */
-	public static < L extends Logger > void logTrace( L logger, String message,
-			Throwable t, Object... args ) {
-		if( logger.isTraceEnabled() ) {
-			logger.trace( formatMessage( message, args ), t );
-		}
+	/* Validation ---------------------------------------------------------- */
+	public static boolean isBlank( String string ) {
+		return (string == null) || string.trim().isEmpty();
 	}
 
-	public static < L extends Logger > void logError( L logger, String message,
-			Throwable t, Object... args ) {
-		if( logger.isErrorEnabled() ) {
-			logger.error( formatMessage( message, args ), t );
-		}
+	public static boolean isNotBlank( String string ) {
+		return !isBlank( string );
 	}
 
-	/* Tools --------------------------------------------------------------- */
-	public static String formatMessage( String message, Object... args ) {
-		String formattedMessage = message;
-		for( Object arg : args ) {
-			formattedMessage = formattedMessage.replaceFirst( "\\{\\}",
-					String.valueOf( arg ) );
-		}
-		return formattedMessage;
+	/* Compare ------------------------------------------------------------- */
+	public static boolean areEqual( String str1, String str2 ) {
+		return (str1 == str2) || ((str1 != null) && str1.equals( str2 ));
 	}
+
 }

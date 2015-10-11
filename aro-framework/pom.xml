@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<!-- Project -->
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>aro-framework</groupId>
+	<groupId>com.avaryuon</groupId>
 	<artifactId>aro-framework</artifactId>
 	<version>0.1-dev</version>
 

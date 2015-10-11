@@ -25,10 +25,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * <b>title</b>
- * <p>
- * description
- * </p>
+ * Configuration handler for ConfigManager.
  * 
  * @author Akyruu (akyruu@hotmail.com)
  * @version 0.1

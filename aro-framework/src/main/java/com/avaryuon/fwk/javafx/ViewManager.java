@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.avaryuon.fwk;
+package com.avaryuon.fwk.javafx;
 
 import java.io.IOException;
 import java.net.URL;
@@ -23,11 +23,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.avaryuon.fwk.AroApplication;
+import com.avaryuon.fwk.javafx.fxml.AroBuilderFactory;
 import com.avaryuon.fwk.util.LogUtils;
 
 /**
@@ -53,23 +56,50 @@ public class ViewManager {
 			.getLogger( ViewManager.class );
 
 	/* FIELDS ============================================================== */
-	// Nothing here
+	/* Beans --------------------------------------------------------------- */
+	@Inject
+	private AroBuilderFactory buildFct;
 
 	/* CONSTRUCTORS ======================================================== */
 	// Nothing here
 
 	/* METHODS ============================================================= */
 	/* Loading ------------------------------------------------------------- */
-	public void loadView( Class< ? > viewClass ) {
+	public < V extends View > V buildView( Class< V > viewClass ) {
+		V view = null;
+
 		FXMLLoader loader = new FXMLLoader();
 		if( initLoader( loader, viewClass ) ) {
-			loadScene( loader );
+			Parent root = buildRoot( loader );
+			if( root != null ) {
+				try {
+					view = viewClass.newInstance();
+				} catch( InstantiationException | IllegalAccessException ex ) {
+					LogUtils.logError(
+							LOGGER,
+							"View \"{}\" must be implements a public default constructor.",
+							ex, viewClass );
+				}
+				view.setRoot( root );
+				view.setController( loader.getController() );
+			}
+		}
+
+		return view;
+	}
+
+	public void loadView( Class< ? extends View > viewClass ) {
+		View view = buildView( viewClass );
+		if( view != null ) {
+			Scene scene = new Scene( view.getRoot() );
+			AroApplication.instance().loadScene( scene );
 		}
 	}
 
 	private boolean initLoader( FXMLLoader loader, Class< ? > viewClass ) {
 		boolean success = true;
 
+		loader.setBuilderFactory( buildFct );
 		loader.setCharset( StandardCharsets.UTF_8 );
 
 		String fxml = viewClass.getSimpleName() + FXML_FILE_EXTENSION;
@@ -84,7 +114,7 @@ public class ViewManager {
 		return success;
 	}
 
-	private void loadScene( FXMLLoader loader ) {
+	private Parent buildRoot( FXMLLoader loader ) {
 		try {
 			loader.load();
 		} catch( IOException ex ) {
@@ -92,10 +122,6 @@ public class ViewManager {
 					loader.getLocation() );
 		}
 
-		Parent root = loader.getRoot();
-		if( root != null ) {
-			Scene scene = new Scene( root );
-			AroApplication.instance().getMainStage().setScene( scene );
-		}
+		return loader.getRoot();
 	}
 }
