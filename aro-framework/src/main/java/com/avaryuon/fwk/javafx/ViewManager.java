@@ -29,9 +29,10 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.avaryuon.commons.LogUtils;
 import com.avaryuon.fwk.AroApplication;
+import com.avaryuon.fwk.core.i18n.I18nManager;
 import com.avaryuon.fwk.javafx.fxml.AroBuilderFactory;
-import com.avaryuon.fwk.util.LogUtils;
 
 /**
  * <b>Manages view on ARO application.</b>
@@ -59,6 +60,8 @@ public class ViewManager {
 	/* Beans --------------------------------------------------------------- */
 	@Inject
 	private AroBuilderFactory buildFct;
+	@Inject
+	private I18nManager i18nMgr;
 
 	/* CONSTRUCTORS ======================================================== */
 	// Nothing here
@@ -101,6 +104,7 @@ public class ViewManager {
 
 		loader.setBuilderFactory( buildFct );
 		loader.setCharset( StandardCharsets.UTF_8 );
+		loader.setResources( i18nMgr.getBundle() );
 
 		String fxml = viewClass.getSimpleName() + FXML_FILE_EXTENSION;
 		URL location = viewClass.getResource( fxml );

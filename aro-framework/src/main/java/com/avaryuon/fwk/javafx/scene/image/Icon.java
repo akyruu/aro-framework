@@ -21,8 +21,8 @@ import javafx.beans.NamedArg;
 import javafx.scene.image.Image;
 import lombok.Getter;
 
-import com.avaryuon.fwk.bean.BeanManager;
-import com.avaryuon.fwk.resource.ThemeManager;
+import com.avaryuon.fwk.core.bean.BeanManager;
+import com.avaryuon.fwk.core.style.ThemeManager;
 
 /**
  * Specific image with cube size.

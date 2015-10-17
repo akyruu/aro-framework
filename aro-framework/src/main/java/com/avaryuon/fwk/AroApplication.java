@@ -29,10 +29,12 @@ import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.avaryuon.fwk.bean.BeanManager;
-import com.avaryuon.fwk.config.ConfigManager;
+import com.avaryuon.commons.RuntimeUtils;
+import com.avaryuon.commons.StringUtils;
+import com.avaryuon.fwk.core.bean.BeanManager;
+import com.avaryuon.fwk.core.config.ConfigManager;
+import com.avaryuon.fwk.javafx.beans.TitleProperty;
 import com.avaryuon.fwk.javafx.util.AlertUtils;
-import com.avaryuon.fwk.util.RuntimeUtils;
 
 /**
  * <b>Define an ARO application</b>
@@ -45,6 +47,9 @@ import com.avaryuon.fwk.util.RuntimeUtils;
  */
 public abstract class AroApplication extends Application {
 	/* STATIC FIELDS ======================================================= */
+	/* Properties ---------------------------------------------------------- */
+	private static final String DEFAULT_TITLE = "ARO application";
+
 	/* Singleton ----------------------------------------------------------- */
 	private static AroApplication instance;
 
@@ -59,7 +64,7 @@ public abstract class AroApplication extends Application {
 
 	/* Properties ---------------------------------------------------------- */
 	@Getter
-	private AroTitle title;
+	private TitleProperty title;
 
 	/* Java FX ------------------------------------------------------------- */
 	@Getter(AccessLevel.PROTECTED)
@@ -94,7 +99,8 @@ public abstract class AroApplication extends Application {
 
 		// Initialize properties
 		String titleBase = configMgr.getProperty( "app", "title" );
-		title = new AroTitle( titleBase );
+		title = new TitleProperty(
+				StringUtils.isBlank( titleBase ) ? DEFAULT_TITLE : titleBase );
 
 		onInit();
 		LOGGER.info( "Application is initialized !" );
@@ -121,9 +127,8 @@ public abstract class AroApplication extends Application {
 			// Prepare and show window
 			mainStage = primaryStage;
 			mainStage.setTitle( title.getValue() );
-			title.getProperty().addListener(
-					( observable, oldValue, newValue ) -> mainStage
-							.setTitle( newValue ) );
+			title.addListener( ( observable, oldValue, newValue ) -> mainStage
+					.setTitle( newValue ) );
 
 			// Start and show
 			onStart();

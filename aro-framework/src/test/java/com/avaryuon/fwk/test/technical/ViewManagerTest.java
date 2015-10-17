@@ -19,7 +19,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 
-import com.avaryuon.fwk.bean.BeanManager;
+import com.avaryuon.fwk.core.bean.BeanManager;
 import com.avaryuon.fwk.javafx.View;
 import com.avaryuon.fwk.javafx.ViewManager;
 import com.avaryuon.fwk.test.FXTestCase;

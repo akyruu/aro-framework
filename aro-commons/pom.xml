@@ -3,34 +3,22 @@
 	<!-- Project -->
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.avaryuon</groupId>
-	<artifactId>aro-framework</artifactId>
+	<artifactId>aro-commons</artifactId>
 	<version>0.1-dev</version>
 
 	<!-- Properties -->
 	<properties>
-		<java.compiler.level>1.8</java.compiler.level>
+		<java.compiler.level>1.7</java.compiler.level>
 	</properties>
 
 	<!-- Dependencies -->
 	<dependencies>
-		<!-- Framework -->
-		<dependency>
-			<groupId>com.avaryuon</groupId>
-			<artifactId>aro-commons</artifactId>
-			<version>0.1-dev</version>
-		</dependency>
 		<!-- Compilation -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<version>1.16.6</version>
 			<scope>provided</scope>
-		</dependency>
-		<!-- Injection -->
-		<dependency>
-			<groupId>org.jboss.weld.se</groupId>
-			<artifactId>weld-se</artifactId>
-			<version>2.2.16.Final</version>
 		</dependency>
 		<!-- Logging -->
 		<dependency>
@@ -43,18 +31,6 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.12</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.athaydes.automaton</groupId>
-			<artifactId>Automaton</artifactId>
-			<version>1.2.3</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.groovy</groupId>
-			<artifactId>groovy-all</artifactId>
-			<version>2.4.5</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
