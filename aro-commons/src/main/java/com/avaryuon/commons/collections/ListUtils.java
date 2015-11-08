@@ -13,22 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.avaryuon.fwk.core.bean;
+package com.avaryuon.commons.collections;
 
-import javax.annotation.Resource;
-import javax.enterprise.inject.Produces;
-
-import com.avaryuon.fwk.AroApplication;
-import com.avaryuon.fwk.core.bean.context.bound.BoundViewContext;
+import java.util.List;
 
 /**
- * Specific bean want to be call with BeanManager.
+ * Contains utility methods for lists. Don't instantiate.
  * 
  * @author Akyruu (akyruu@hotmail.com)
  * @version 0.1
  */
-@Resource
-public class BeanResource {
+public final class ListUtils {
 	/* STATIC FIELDS ======================================================= */
 	// Nothing here
 
@@ -36,24 +31,14 @@ public class BeanResource {
 	// Nothing here
 
 	/* CONSTRUCTORS ======================================================== */
-	// Nothing here
+	private ListUtils() {
+		// Nothing to do
+	}
 
 	/* METHODS ============================================================= */
-	/* Application --------------------------------------------------------- */
-	@Produces
-	public AroApplication getAroApplication() {
-		return AroApplication.instance();
+	/* Iterator ------------------------------------------------------------ */
+	public static < T > ListIterator< T > iterator( List< T > list ) {
+		return new ListIterator<>( list );
 	}
 
-	/* Bean ---------------------------------------------------------------- */
-	@Produces
-	public BeanManager getBeanManager() {
-		return BeanManager.instance();
-	}
-
-	/* Scope contexts ------------------------------------------------------ */
-	@Produces
-	public BoundViewContext createViewContext() {
-		return BeanManager.instance().getExtension().getViewContext();
-	}
 }

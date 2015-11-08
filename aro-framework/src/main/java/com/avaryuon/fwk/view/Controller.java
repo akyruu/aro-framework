@@ -13,27 +13,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.avaryuon.commons.io.file;
+package com.avaryuon.fwk.view;
+
+import javafx.fxml.FXML;
+import lombok.AccessLevel;
+import lombok.Setter;
 
 /**
- * Standard file extension.
+ * View controller.
  * 
  * @author Akyruu (akyruu@hotmail.com)
  * @version 0.1
  */
-public enum StandardFileExtension implements FileExtension {
-	/* VALUES ============================================================== */
-	PROPERTIES
-
+public class Controller {
 	/* STATIC FIELDS ======================================================= */
 	// Nothing here
 
 	/* FIELDS ============================================================== */
-	// Nothing here
+	@Setter(AccessLevel.PACKAGE)
+	private View view;
 
 	/* CONSTRUCTORS ======================================================== */
-	// Nothing here
+	@FXML
+	private final void initialize() {
+		onInit();
+	}
+
+	/**
+	 * Override this method for initialize your controller.
+	 */
+	protected void onInit() {
+		// Nothing to do
+	}
 
 	/* METHODS ============================================================= */
-	// Nothing here
+	@SuppressWarnings("unchecked")
+	public < T extends View > T getView() {
+		return (T) view;
+	}
+
 }

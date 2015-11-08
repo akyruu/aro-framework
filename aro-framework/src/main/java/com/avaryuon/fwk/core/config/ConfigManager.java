@@ -30,6 +30,8 @@ import org.xml.sax.SAXException;
 
 import com.avaryuon.commons.xml.XmlUtils;
 import com.avaryuon.fwk.AroApplication;
+import com.avaryuon.fwk.core.bean.BeanManager;
+import com.avaryuon.fwk.core.i18n.I18nManager;
 
 /**
  * <b>Manager configuration files, properties and preferences in ARO
@@ -59,6 +61,9 @@ public class ConfigManager {
 	private static final String APP_GROUP = "app";
 	private static final String APPLICATION_GROUP = "application";
 
+	/* Specific ------------------------------------------------------------ */
+	public static final String BUNDLE_KEY_PREFIX = "%";
+
 	/* Logging ------------------------------------------------------------- */
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger( ConfigManager.class );
@@ -70,6 +75,8 @@ public class ConfigManager {
 	/* Beans --------------------------------------------------------------- */
 	@Inject
 	private AroApplication app;
+	@Inject
+	private BeanManager beanMgr;
 
 	/* CONSTRUCTORS ======================================================== */
 	/* Initialization ------------------------------------------------------ */
@@ -98,6 +105,16 @@ public class ConfigManager {
 	}
 
 	/* METHODS ============================================================= */
+	/* Access -------------------------------------------------------------- */
+	/**
+	 * Use lazy load otherwise throw circular dependencies.
+	 * 
+	 * @return Instance of I18nManager.
+	 */
+	private I18nManager getI18nMgr() {
+		return beanMgr.getBean( I18nManager.class );
+	}
+
 	/* Properties ---------------------------------------------------------- */
 	/**
 	 * Gets property from configuration.
@@ -116,6 +133,11 @@ public class ConfigManager {
 		return getProperty( group, name, null );
 	}
 
+	public String getProperty( PropKey propKey ) {
+		return getProperty( propKey.group(), propKey.key(),
+				propKey.defaultValue() );
+	}
+
 	/**
 	 * Gets property from configuration.
 	 * 
@@ -129,18 +151,25 @@ public class ConfigManager {
 	 * @return A string or defaultValue if group or property not found.
 	 */
 	public String getProperty( String group, String name, String defaultValue ) {
-		String property = null;
+		String propertyValue = null;
 
-		if( SYSTEM_GROUP.equals( name ) ) {
-			property = System.getProperty( name );
+		if( SYSTEM_GROUP.equals( group ) ) {
+			propertyValue = System.getProperty( name );
 		} else {
 			String realGroup = APP_GROUP.equals( group ) ? APPLICATION_GROUP
 					: group;
 			Properties properties = propertyGroups.get( realGroup );
-			property = (properties == null) ? defaultValue : properties
+			propertyValue = (properties == null) ? defaultValue : properties
 					.getProperty( name, defaultValue );
+			if( propertyValue != null ) {
+				if( propertyValue.startsWith( BUNDLE_KEY_PREFIX ) ) {
+					String msgKey = propertyValue.substring( BUNDLE_KEY_PREFIX
+							.length() );
+					propertyValue = getI18nMgr().getBundleMessage( msgKey );
+				}
+			}
 		}
 
-		return property;
+		return propertyValue;
 	}
 }

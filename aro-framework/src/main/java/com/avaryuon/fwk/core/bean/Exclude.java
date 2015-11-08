@@ -13,27 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.avaryuon.commons.io.file;
+package com.avaryuon.fwk.core.bean;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import javax.inject.Qualifier;
 
 /**
- * Standard file extension.
+ * Exclude bean to scan. Use this annotation if you use produce.
  * 
  * @author Akyruu (akyruu@hotmail.com)
  * @version 0.1
  */
-public enum StandardFileExtension implements FileExtension {
-	/* VALUES ============================================================== */
-	PROPERTIES
-
+@Qualifier
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+@Inherited
+public @interface Exclude {
 	/* STATIC FIELDS ======================================================= */
-	// Nothing here
-
-	/* FIELDS ============================================================== */
-	// Nothing here
-
-	/* CONSTRUCTORS ======================================================== */
 	// Nothing here
 
 	/* METHODS ============================================================= */
 	// Nothing here
+
 }

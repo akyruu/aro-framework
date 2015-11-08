@@ -13,17 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.avaryuon.commons.io.file;
+package com.avaryuon.fwk.javafx;
+
+import com.avaryuon.commons.io.file.FileExtension;
 
 /**
- * Standard file extension.
+ * Java FX file extension.
  * 
  * @author Akyruu (akyruu@hotmail.com)
  * @version 0.1
  */
-public enum StandardFileExtension implements FileExtension {
+public enum JavaFXFileExtension implements FileExtension {
 	/* VALUES ============================================================== */
-	PROPERTIES
+	FXML
 
 	/* STATIC FIELDS ======================================================= */
 	// Nothing here

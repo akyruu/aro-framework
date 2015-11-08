@@ -13,22 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.avaryuon.fwk.core.bean;
+package com.avaryuon.commons.collections;
 
-import javax.annotation.Resource;
-import javax.enterprise.inject.Produces;
-
-import com.avaryuon.fwk.AroApplication;
-import com.avaryuon.fwk.core.bean.context.bound.BoundViewContext;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
- * Specific bean want to be call with BeanManager.
+ * Contains utility methods for collections. Don't instantiate.
  * 
  * @author Akyruu (akyruu@hotmail.com)
  * @version 0.1
  */
-@Resource
-public class BeanResource {
+public final class CollectionUtils {
 	/* STATIC FIELDS ======================================================= */
 	// Nothing here
 
@@ -36,24 +33,26 @@ public class BeanResource {
 	// Nothing here
 
 	/* CONSTRUCTORS ======================================================== */
-	// Nothing here
+	private CollectionUtils() {
+		// Nothing to do
+	}
 
 	/* METHODS ============================================================= */
-	/* Application --------------------------------------------------------- */
-	@Produces
-	public AroApplication getAroApplication() {
-		return AroApplication.instance();
-	}
-
-	/* Bean ---------------------------------------------------------------- */
-	@Produces
-	public BeanManager getBeanManager() {
-		return BeanManager.instance();
-	}
-
-	/* Scope contexts ------------------------------------------------------ */
-	@Produces
-	public BoundViewContext createViewContext() {
-		return BeanManager.instance().getExtension().getViewContext();
+	/**
+	 * Adds an item into a new list copied from parameter list in first place.
+	 * 
+	 * @param list
+	 *            List to copied.
+	 * @param item
+	 *            Item to add in copied list.
+	 * @return A copied list.
+	 */
+	@SuppressWarnings("unchecked")
+	public static < S, T extends S > List< S > addFirstToCopy( List< S > list,
+			T... items ) {
+		List< S > copiedList = new ArrayList<>();
+		copiedList.addAll( Arrays.asList( items ) );
+		copiedList.addAll( list );
+		return copiedList;
 	}
 }

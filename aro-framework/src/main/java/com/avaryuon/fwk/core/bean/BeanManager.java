@@ -15,10 +15,21 @@
  */
 package com.avaryuon.fwk.core.bean;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.util.Collection;
+
+import javax.inject.Inject;
+
+import lombok.AccessLevel;
+import lombok.Getter;
+
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.avaryuon.commons.reflect.ReflectionUtils;
 
 /**
  * <b>Manages bean in ARO application.</b>
@@ -29,6 +40,7 @@ import org.slf4j.LoggerFactory;
  * @author Akyruu (akyruu@hotmail.com)
  * @version 0.1
  */
+@Exclude
 public class BeanManager {
 	/* STATIC FIELDS ======================================================= */
 	/* Singleton ----------------------------------------------------------- */
@@ -40,8 +52,12 @@ public class BeanManager {
 
 	/* FIELDS ============================================================== */
 	/* Injection ----------------------------------------------------------- */
-	private final Weld weld;
-	private final WeldContainer container;
+	private Weld weld;
+	private WeldContainer container;
+
+	/* Extensions ---------------------------------------------------------- */
+	@Getter(AccessLevel.PACKAGE)
+	private BeanExtension extension;
 
 	/* CONSTRUCTORS ======================================================== */
 	private BeanManager() {
@@ -49,6 +65,7 @@ public class BeanManager {
 
 		// Initialize injection fields
 		weld = new Weld();
+		weld.addExtension( extension = new BeanExtension() );
 		container = weld.initialize();
 
 		// Add shutdown treatment
@@ -64,8 +81,18 @@ public class BeanManager {
 
 	/* METHODS ============================================================= */
 	/* Beans --------------------------------------------------------------- */
-	public < T > T getBean( Class< T > type ) {
-		return container.instance().select( type ).get();
+	public < T > T getBean( Class< T > type, Annotation... qualifiers ) {
+		return container.instance().select( type, qualifiers ).get();
+	}
+
+	/* Injection ----------------------------------------------------------- */
+	public void injectFields( Object obj ) {
+		Collection< Field > injectFields = ReflectionUtils.findFields(
+				obj.getClass(), Inject.class );
+		for( Field injectField : injectFields ) {
+			ReflectionUtils.setValue( obj, injectField,
+					getBean( injectField.getType() ) );
+		}
 	}
 
 	/* Singleton ----------------------------------------------------------- */

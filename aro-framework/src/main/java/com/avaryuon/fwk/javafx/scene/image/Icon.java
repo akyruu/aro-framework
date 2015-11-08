@@ -41,6 +41,10 @@ public class Icon extends Image {
 	private int size;
 
 	/* CONSTRUCTORS ======================================================== */
+	public Icon( URL iconURL ) {
+		super( iconURL.toExternalForm() );
+	}
+
 	public Icon( @NamedArg("name") String name, @NamedArg("size") int size ) {
 		this( name, size, false, false );
 	}

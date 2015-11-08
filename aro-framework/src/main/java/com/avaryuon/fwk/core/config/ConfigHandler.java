@@ -15,10 +15,10 @@
  */
 package com.avaryuon.fwk.core.config;
 
+import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Queue;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -42,7 +42,7 @@ class ConfigHandler extends DefaultHandler {
 	private int level;
 	private String propertyGroup;
 	private Properties properties;
-	private Queue< String > propertyNames;
+	private Deque< String > propertyNames;
 	private String propertyValue;
 
 	/* CONSTRUCTORS ======================================================== */
@@ -90,7 +90,7 @@ class ConfigHandler extends DefaultHandler {
 		level--;
 		if( (level > 1) && (propertyValue != null) ) {
 			// Build property name
-			String lastPropertyName = propertyNames.poll();
+			String lastPropertyName = propertyNames.pollLast();
 			StringBuilder propertyNameBuilder = new StringBuilder();
 			for( String propertyName : propertyNames ) {
 				propertyNameBuilder.append( propertyName ).append(

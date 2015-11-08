@@ -32,8 +32,8 @@ import java.util.zip.ZipInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.avaryuon.commons.CollectionUtils;
 import com.avaryuon.commons.StringUtils;
+import com.avaryuon.commons.collections.CollectionUtils;
 import com.avaryuon.commons.io.file.FileContants;
 
 /**

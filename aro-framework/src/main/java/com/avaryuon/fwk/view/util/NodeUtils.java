@@ -13,19 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.avaryuon.commons;
+package com.avaryuon.fwk.view.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import javafx.scene.Node;
 
 /**
- * Contains utility methods for collections. Don't instantiate.
+ * Contains utility methods for Java FX nodes. Don't instantiate.
  * 
  * @author Akyruu (akyruu@hotmail.com)
  * @version 0.1
  */
-public final class CollectionUtils {
+public final class NodeUtils {
 	/* STATIC FIELDS ======================================================= */
 	// Nothing here
 
@@ -33,26 +31,19 @@ public final class CollectionUtils {
 	// Nothing here
 
 	/* CONSTRUCTORS ======================================================== */
-	private CollectionUtils() {
+	private NodeUtils() {
 		// Nothing to do
 	}
 
 	/* METHODS ============================================================= */
-	/**
-	 * Adds an item into a new list copied from parameter list in first place.
-	 * 
-	 * @param list
-	 *            List to copied.
-	 * @param item
-	 *            Item to add in copied list.
-	 * @return A copied list.
-	 */
-	@SuppressWarnings("unchecked")
-	public static < S, T extends S > List< S > addFirstToCopy( List< S > list,
-			T... items ) {
-		List< S > copiedList = new ArrayList<>();
-		copiedList.addAll( Arrays.asList( items ) );
-		copiedList.addAll( list );
-		return copiedList;
+	/* Location ------------------------------------------------------------ */
+	public static double getLocalX( Node node ) {
+		return node.localToScene( node.getBoundsInLocal() ).getMinX()
+				+ node.getScene().getX() + node.getScene().getWindow().getX();
+	}
+
+	public static double getLocalY( Node node ) {
+		return node.localToScene( node.getBoundsInLocal() ).getMinY()
+				+ node.getScene().getY() + node.getScene().getWindow().getY();
 	}
 }

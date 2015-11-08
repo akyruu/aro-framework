@@ -26,5 +26,9 @@ public interface FileExtension {
 	// Nothing here
 
 	/* METHODS ============================================================= */
-	// Nothing here
+	public default String extension() {
+		Enum< ? > thisEnum = Enum.class.cast( this );
+		String name = thisEnum.name().toLowerCase();
+		return FileContants.EXTENSION_SEPARATOR + name;
+	}
 }

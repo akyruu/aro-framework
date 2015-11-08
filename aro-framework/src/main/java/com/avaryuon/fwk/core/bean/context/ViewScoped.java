@@ -13,27 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.avaryuon.commons.io.file;
+package com.avaryuon.fwk.core.bean.context;
+
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
 /**
- * Standard file extension.
+ * View scope reload after main scene changed.
  * 
  * @author Akyruu (akyruu@hotmail.com)
  * @version 0.1
  */
-public enum StandardFileExtension implements FileExtension {
-	/* VALUES ============================================================== */
-	PROPERTIES
-
+@Target({ TYPE, METHOD, FIELD })
+@Retention(RUNTIME)
+@Documented
+@Inherited
+public @interface ViewScoped {
 	/* STATIC FIELDS ======================================================= */
-	// Nothing here
-
-	/* FIELDS ============================================================== */
-	// Nothing here
-
-	/* CONSTRUCTORS ======================================================== */
 	// Nothing here
 
 	/* METHODS ============================================================= */
 	// Nothing here
+
 }

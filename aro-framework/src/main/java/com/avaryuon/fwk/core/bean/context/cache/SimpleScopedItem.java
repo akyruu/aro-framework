@@ -13,27 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.avaryuon.commons.io.file;
+package com.avaryuon.fwk.core.bean.context.cache;
 
 /**
- * Standard file extension.
+ * Simple scoped item (inspired by RequestScopedItem).
+ * 
+ * @see org.jboss.weld.context.cache.RequestScopedItem
  * 
  * @author Akyruu (akyruu@hotmail.com)
  * @version 0.1
  */
-public enum StandardFileExtension implements FileExtension {
-	/* VALUES ============================================================== */
-	PROPERTIES
-
+public interface SimpleScopedItem {
 	/* STATIC FIELDS ======================================================= */
 	// Nothing here
 
-	/* FIELDS ============================================================== */
-	// Nothing here
-
-	/* CONSTRUCTORS ======================================================== */
-	// Nothing here
-
 	/* METHODS ============================================================= */
-	// Nothing here
+	void invalidate();
 }

@@ -23,7 +23,11 @@ import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.FileAttribute;
 import java.text.Normalizer;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -34,8 +38,9 @@ import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.avaryuon.commons.ArrayUtils;
+import com.avaryuon.commons.io.file.FileContants;
 import com.avaryuon.fwk.AroApplication;
+import com.avaryuon.fwk.AroPropKey;
 import com.avaryuon.fwk.core.config.ConfigManager;
 
 /**
@@ -57,22 +62,25 @@ public class ResourceManager {
 	/* STATIC FIELDS ======================================================= */
 	/* Paths --------------------------------------------------------------- */
 	private static final String RESOURCES_FOLDER_NAME = "resources";
+	private static final String RESOURCES_FOLDER_PATH = FileContants.PATH_SEPARATOR
+			+ RESOURCES_FOLDER_NAME;
 
 	/* Logging ------------------------------------------------------------- */
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger( ResourceManager.class );
 
-	private static final String RESOURCE_FOUND_LOG = "Resource found: {}";
+	private static final String LOG_RESOURCE_FOUND = "Resource found: {}";
 
 	/* FIELDS ============================================================== */
 	/* Resources ----------------------------------------------------------- */
 	@Getter
 	private ClassLoader classLoader;
+	@Getter
+	private Path tempFolderPath;
 
 	/* Beans --------------------------------------------------------------- */
 	@Inject
 	private AroApplication app;
-
 	@Inject
 	private ConfigManager configMgr;
 
@@ -82,43 +90,66 @@ public class ResourceManager {
 	void initialize() throws IOException {
 		LOGGER.info( "Initialize resources manager..." );
 
-		URL[] resourceURLs = new URL[0];
+		List< URL > resourceURLs = new ArrayList<>();
 
 		/* Paths */
 		Path installResourceFolder = Paths.get( RESOURCES_FOLDER_NAME + "/" );
 		if( isValidFolder( installResourceFolder ) ) {
-			URL resourceURL = format( installResourceFolder.toUri().toURL() );
-			resourceURLs = ArrayUtils.push( resourceURLs, resourceURL );
-			LOGGER.info( RESOURCE_FOUND_LOG, resourceURL );
+			URL resourceURL = installResourceFolder.toUri().toURL();
+			addResourceUrlIfNotNull( resourceURLs, resourceURL );
 		}
 
-		String appTitle = configMgr.getProperty( "app", "title" );
-		if( appTitle != null ) {
+		String appName = configMgr.getProperty( AroPropKey.NAME );
+		if( appName != null ) {
 			Path userResourceFolder = Paths.get(
 					configMgr.getProperty( "system", "user.home" ), "."
-							+ formatTitle( appTitle ) + "/" );
+							+ formatTitle( appName )
+							+ FileContants.PATH_SEPARATOR );
 			if( isValidFolder( userResourceFolder ) ) {
 				URL resourceURL = userResourceFolder.toUri().toURL();
-				resourceURLs = ArrayUtils.push( resourceURLs, resourceURL );
-				LOGGER.info( RESOURCE_FOUND_LOG, resourceURL );
+				addResourceUrlIfNotNull( resourceURLs, resourceURL );
 			}
 		}
 
-		URL jarResourceURL = app.getClass().getResource(
-				"/" + RESOURCES_FOLDER_NAME );
-		if( jarResourceURL != null ) {
-			jarResourceURL = format( jarResourceURL );
-			resourceURLs = ArrayUtils.push( resourceURLs, jarResourceURL );
-			LOGGER.info( RESOURCE_FOUND_LOG, jarResourceURL );
+		URL jarResourceURL = app.getClass().getResource( RESOURCES_FOLDER_PATH );
+		addResourceUrlIfNotNull( resourceURLs, jarResourceURL );
+
+		Enumeration< URL > en = app.getClass().getClassLoader()
+				.getResources( RESOURCES_FOLDER_NAME );
+		while( en.hasMoreElements() ) {
+			URL resourceURL = en.nextElement();
+			if( !resourceURL.equals( jarResourceURL ) ) {
+				addResourceUrlIfNotNull( resourceURLs, resourceURL );
+			}
 		}
 
 		/* Resources */
-		if( resourceURLs.length == 0 ) {
+		if( resourceURLs.isEmpty() ) {
 			LOGGER.info( "No resources found." );
 		}
-		classLoader = new URLClassLoader( resourceURLs );
+		classLoader = new URLClassLoader(
+				resourceURLs.toArray( new URL[resourceURLs.size()] ) );
+
+		/* Temporary */
+		tempFolderPath = Files.createTempDirectory( appName );
+		LOGGER.info( "Tempory path: {}", tempFolderPath );
 
 		LOGGER.info( "Resources manager is initialized !" );
+	}
+
+	private void addResourceUrlIfNotNull( List< URL > resourceURLs,
+			URL resourceURL ) throws MalformedURLException {
+		if( resourceURL != null ) {
+			// Format URL
+			String externalForm = resourceURL.toExternalForm();
+			URL formattedURL = externalForm
+					.endsWith( FileContants.PATH_SEPARATOR ) ? resourceURL
+					: new URL( externalForm + FileContants.PATH_SEPARATOR );
+
+			// Add URL
+			resourceURLs.add( formattedURL );
+			LOGGER.info( LOG_RESOURCE_FOUND, formattedURL );
+		}
 	}
 
 	/* METHODS ============================================================= */
@@ -132,15 +163,15 @@ public class ResourceManager {
 		return classLoader.getResourceAsStream( name );
 	}
 
+	/* Temporary ----------------------------------------------------------- */
+	public Path createTempFile( String fileName, FileAttribute< ? >... attrs )
+			throws IOException {
+		return Files.createTempFile( tempFolderPath, "~", fileName, attrs );
+	}
+
 	/* TOOLS =============================================================== */
 	private boolean isValidFolder( Path dir ) {
 		return Files.exists( dir ) && Files.isDirectory( dir );
-	}
-
-	private URL format( URL url ) throws MalformedURLException {
-		String externalForm = url.toExternalForm();
-		return externalForm.endsWith( "/" ) ? url
-				: new URL( externalForm + "/" );
 	}
 
 	private String formatTitle( String title ) {

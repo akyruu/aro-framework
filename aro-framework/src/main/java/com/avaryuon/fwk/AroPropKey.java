@@ -13,27 +13,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.avaryuon.commons.io.file;
+package com.avaryuon.fwk;
+
+import com.avaryuon.fwk.core.config.PropKey;
 
 /**
- * Standard file extension.
+ * Keys of ARO properties.
  * 
  * @author Akyruu (akyruu@hotmail.com)
  * @version 0.1
  */
-public enum StandardFileExtension implements FileExtension {
+public enum AroPropKey implements PropKey {
 	/* VALUES ============================================================== */
-	PROPERTIES
+	NAME( "aro" ), TITLE( "ARO application" ),
+
+	/* Icons --------------------------------------------------------------- */
+	ICON_NAME, ICON_SIZES;
 
 	/* STATIC FIELDS ======================================================= */
 	// Nothing here
 
 	/* FIELDS ============================================================== */
-	// Nothing here
+	private String defaultValue;
 
 	/* CONSTRUCTORS ======================================================== */
-	// Nothing here
+	private AroPropKey() {
+		this( null );
+	}
+
+	private AroPropKey( String defaultValue ) {
+		this.defaultValue = defaultValue;
+	}
 
 	/* METHODS ============================================================= */
-	// Nothing here
+	/* Overriding - PropKey.class ------------------------------------------ */
+	@Override
+	public String group() {
+		return "app";
+	}
+
+	@Override
+	public String defaultValue() {
+		return defaultValue;
+	}
 }

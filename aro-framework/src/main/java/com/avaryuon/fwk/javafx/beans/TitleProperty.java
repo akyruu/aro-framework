@@ -57,6 +57,7 @@ public class TitleProperty extends SimpleStringProperty {
 		base = title;
 		extend = null;
 		status = TitleStatus.NONE;
+		update();
 	}
 
 	/* METHODS ============================================================= */

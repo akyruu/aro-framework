@@ -13,27 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.avaryuon.commons.io.file;
+package com.avaryuon.fwk.javafx.concurrent;
+
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
 
 /**
- * Standard file extension.
+ * Wraps existing task in service.
  * 
  * @author Akyruu (akyruu@hotmail.com)
  * @version 0.1
  */
-public enum StandardFileExtension implements FileExtension {
-	/* VALUES ============================================================== */
-	PROPERTIES
-
+public class WrapService< T > extends Service< T > {
 	/* STATIC FIELDS ======================================================= */
 	// Nothing here
 
 	/* FIELDS ============================================================== */
-	// Nothing here
+	private Task< T > wrapped;
 
 	/* CONSTRUCTORS ======================================================== */
-	// Nothing here
+	public WrapService( Task< T > task ) {
+		wrapped = task;
+	}
 
 	/* METHODS ============================================================= */
-	// Nothing here
+	/**
+	 * @see javafx.concurrent.Service#createTask()
+	 */
+	@Override
+	protected Task< T > createTask() {
+		return wrapped;
+	}
 }

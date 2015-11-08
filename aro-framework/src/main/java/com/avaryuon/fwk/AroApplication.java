@@ -21,9 +21,10 @@ import java.io.RandomAccessFile;
 import java.nio.channels.FileLock;
 
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import lombok.AccessLevel;
 import lombok.Getter;
 
 import org.slf4j.Logger;
@@ -32,9 +33,12 @@ import org.slf4j.LoggerFactory;
 import com.avaryuon.commons.RuntimeUtils;
 import com.avaryuon.commons.StringUtils;
 import com.avaryuon.fwk.core.bean.BeanManager;
+import com.avaryuon.fwk.core.bean.Exclude;
+import com.avaryuon.fwk.core.bean.context.holder.ViewHolder;
 import com.avaryuon.fwk.core.config.ConfigManager;
 import com.avaryuon.fwk.javafx.beans.TitleProperty;
-import com.avaryuon.fwk.javafx.util.AlertUtils;
+import com.avaryuon.fwk.javafx.collection.IconList;
+import com.avaryuon.fwk.view.util.AlertUtils;
 
 /**
  * <b>Define an ARO application</b>
@@ -45,11 +49,9 @@ import com.avaryuon.fwk.javafx.util.AlertUtils;
  * @author Akyruu (akyruu@hotmail.com)
  * @version 0.1
  */
+@Exclude
 public abstract class AroApplication extends Application {
 	/* STATIC FIELDS ======================================================= */
-	/* Properties ---------------------------------------------------------- */
-	private static final String DEFAULT_TITLE = "ARO application";
-
 	/* Singleton ----------------------------------------------------------- */
 	private static AroApplication instance;
 
@@ -64,14 +66,19 @@ public abstract class AroApplication extends Application {
 
 	/* Properties ---------------------------------------------------------- */
 	@Getter
+	private AroContext context;
+	@Getter
 	private TitleProperty title;
+	@Getter
+	private IconList icons;
 
 	/* Java FX ------------------------------------------------------------- */
-	@Getter(AccessLevel.PROTECTED)
+	@Getter
 	private Stage mainStage;
 
 	/* Beans --------------------------------------------------------------- */
 	private ConfigManager configMgr;
+	private ViewHolder viewHolder;
 
 	/* CONSTRUCTORS ======================================================== */
 	protected AroApplication() {
@@ -84,7 +91,17 @@ public abstract class AroApplication extends Application {
 	/* METHODS ============================================================= */
 	/* Scene --------------------------------------------------------------- */
 	public void loadScene( Scene scene ) {
+		if( mainStage.getScene() != null ) {
+			viewHolder.start();
+		}
+		if( scene == null ) {
+			viewHolder.end();
+		}
 		mainStage.setScene( scene );
+	}
+
+	public Parent test() {
+		return mainStage.getScene().getRoot();
 	}
 
 	/* Life-cycle ---------------------------------------------------------- */
@@ -96,14 +113,45 @@ public abstract class AroApplication extends Application {
 		// Gets bean from manager (this is not instantiate via injection)
 		BeanManager beanMgr = BeanManager.instance();
 		configMgr = beanMgr.getBean( ConfigManager.class );
+		viewHolder = beanMgr.getBean( ViewHolder.class );
 
 		// Initialize properties
-		String titleBase = configMgr.getProperty( "app", "title" );
-		title = new TitleProperty(
-				StringUtils.isBlank( titleBase ) ? DEFAULT_TITLE : titleBase );
+		initTitle();
+		initIcon();
+
+		context = beanMgr.getBean( AroContext.class );
 
 		onInit();
 		LOGGER.info( "Application is initialized !" );
+	}
+
+	private void initTitle() {
+		String titleBase = configMgr.getProperty( AroPropKey.TITLE );
+		title = new TitleProperty(
+				StringUtils.isBlank( titleBase ) ? AroPropKey.TITLE
+						.defaultValue() : titleBase );
+	}
+
+	private void initIcon() {
+		icons = new IconList();
+
+		String iconName = configMgr.getProperty( AroPropKey.ICON_NAME );
+		if( iconName == null ) {
+			LOGGER.info( "No application icon to load" );
+			return;
+		}
+		String sizes = configMgr.getProperty( AroPropKey.ICON_SIZES );
+		if( sizes == null ) {
+			LOGGER.error( "Failed to load application icon: no icon size specified" );
+			return;
+		}
+		for( String size : sizes.split( "," ) ) {
+			try {
+				icons.add( iconName, Integer.parseInt( size ) );
+			} catch( NumberFormatException ex ) {
+				LOGGER.error( "Size {} is not a number", size );
+			}
+		}
 	}
 
 	/**
@@ -120,7 +168,7 @@ public abstract class AroApplication extends Application {
 	 */
 	@Override
 	public final void start( Stage primaryStage ) throws Exception {
-		LOGGER.info( "Start {}...", title );
+		LOGGER.info( "Start {}...", title.getBase() );
 
 		// Check if this application is not already started
 		if( checkSingletonInstance() ) {
@@ -129,12 +177,17 @@ public abstract class AroApplication extends Application {
 			mainStage.setTitle( title.getValue() );
 			title.addListener( ( observable, oldValue, newValue ) -> mainStage
 					.setTitle( newValue ) );
+			mainStage.getIcons().addAll( icons );
+			mainStage.setOnCloseRequest( event -> {
+				close();
+			} );
 
 			// Start and show
+			viewHolder.start();
 			onStart();
 			mainStage.show();
 
-			LOGGER.info( "{} is started !", title );
+			LOGGER.info( "{} is started !", title.getBase() );
 		}
 	}
 
@@ -152,7 +205,7 @@ public abstract class AroApplication extends Application {
 	 */
 	@Override
 	public final void stop() throws Exception {
-		LOGGER.info( "Stop {}...", title );
+		LOGGER.info( "Stop {}...", title.getBase() );
 		onStop();
 	}
 
@@ -162,6 +215,26 @@ public abstract class AroApplication extends Application {
 	 */
 	protected void onStop() throws Exception {
 		// Nothing to do
+	}
+
+	/* Exit */
+	public final void close() {
+		boolean confirmed = onClose();
+		if( confirmed ) {
+			Platform.exit();
+			System.exit( 0 );
+		}
+	}
+
+	/**
+	 * Called at the start of exit(). Overrides this method for add confirm
+	 * message.
+	 * 
+	 * @return True if exit or false for stand alive.
+	 */
+	protected boolean onClose() {
+		// Nothing to do
+		return true;
 	}
 
 	/* Singleton ----------------------------------------------------------- */
@@ -194,12 +267,12 @@ public abstract class AroApplication extends Application {
 				} catch( IOException ex ) {
 					LOGGER.error( "Unlock application failed.", ex );
 				}
-				LOGGER.info( "{} is stopped.", title );
+				LOGGER.info( "{} is stopped.", title.getBase() );
 			} );
 		} else {
 			AlertUtils.showInfo( title.getBase(), null,
 					"The application is already running." );
-			LOGGER.info( "{} is stopped !", title );
+			LOGGER.info( "{} is stopped !", title.getBase() );
 		}
 
 		return success;

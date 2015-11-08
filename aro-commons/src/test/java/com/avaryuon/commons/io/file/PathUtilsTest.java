@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.avaryuon.fwk.io.test;
+package com.avaryuon.commons.io.file;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -25,7 +25,7 @@ import junit.framework.TestCase;
 import com.avaryuon.commons.io.file.PathUtils;
 
 /**
- * Test case for JavaFX tests.
+ * Test case for PathUtils.
  * 
  * @author Akyruu (akyruu@hotmail.com)
  * @version 0.1

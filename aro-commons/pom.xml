@@ -8,7 +8,7 @@
 
 	<!-- Properties -->
 	<properties>
-		<java.compiler.level>1.7</java.compiler.level>
+		<java.compiler.level>1.8</java.compiler.level>
 	</properties>
 
 	<!-- Dependencies -->

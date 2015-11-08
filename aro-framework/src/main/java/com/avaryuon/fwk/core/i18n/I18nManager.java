@@ -15,7 +15,6 @@
  */
 package com.avaryuon.fwk.core.i18n;
 
-import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -29,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.avaryuon.commons.LogUtils;
+import com.avaryuon.commons.StringUtils;
 import com.avaryuon.fwk.core.resource.ResourceManager;
 
 /**
@@ -48,6 +48,9 @@ public class I18nManager {
 	/* Logging ------------------------------------------------------------- */
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger( I18nManager.class );
+
+	private static final String LOG_BUNDLE_NOT_FOUND = "The bundle '{}' is not found.";
+	private static final String LOG_MESSAGE_NOT_FOUND = "The message '{}' in bundle '{}' is not found.";
 
 	/* FIELDS ============================================================== */
 	private Locale locale;
@@ -85,41 +88,67 @@ public class I18nManager {
 
 	/* Bundle -------------------------------------------------------------- */
 	public ResourceBundle getBundle() {
-		return getBundle( I18nConstants.DEFAULT_BUNDLE_NAME );
-	}
-
-	public ResourceBundle getBundle( String bundleName ) {
-		ResourceBundle bundle = zipBundle;
-		if( bundle == null ) {
-			ClassLoader loader = resourceMgr.getClassLoader();
-			try {
-				bundle = ResourceBundle.getBundle( BASE_FOLDER_NAME
-						+ bundleName, locale, loader );
-			} catch( MissingResourceException ex ) {
-				LogUtils.logError( LOGGER, "The bundle {} is not found.", ex,
-						bundleName );
-			}
+		ResourceBundle bundle = null;
+		try {
+			return getBundleImpl( I18nConstants.DEFAULT_BUNDLE_NAME );
+		} catch( MissingResourceException ex ) {
+			LogUtils.logTrace( LOGGER, LOG_BUNDLE_NOT_FOUND, ex,
+					I18nConstants.DEFAULT_BUNDLE_NAME );
 		}
 		return bundle;
 	}
 
+	public ResourceBundle getBundle( String bundleName ) {
+		ResourceBundle bundle = null;
+		try {
+			return getBundleImpl( bundleName );
+		} catch( MissingResourceException ex ) {
+			LogUtils.logError( LOGGER, LOG_BUNDLE_NOT_FOUND, ex, bundleName );
+		}
+		return bundle;
+	}
+
+	private ResourceBundle getBundleImpl( String bundleName )
+			throws MissingResourceException {
+		ResourceBundle bundle = zipBundle;
+		if( bundle == null ) {
+			ClassLoader loader = resourceMgr.getClassLoader();
+			bundle = ResourceBundle.getBundle( BASE_FOLDER_NAME + bundleName,
+					locale, loader );
+		}
+		return bundle;
+	}
+
+	/* Message ------------------------------------------------------------- */
 	public String getBundleMessage( String msgKey, Object... args ) {
 		return getBundleMessage( I18nConstants.DEFAULT_BUNDLE_NAME, msgKey,
 				args );
 	}
 
-	public String getBundleMessage( String bundleName, String key,
+	public String getBundleMessage( MsgKey msgKey, Object... args ) {
+		return getBundleMessage( msgKey.bundleName(), msgKey.key(), args );
+	}
+
+	public String getBundleMessage( String bundleName, String msgKey,
 			Object... args ) {
 		String message = null;
 		if( zipBundle != null ) {
-			message = zipBundle.getString( bundleName, key );
-		} else {
+			message = zipBundle.getString( bundleName, msgKey );
+		}
+		if( message == null ) {
 			ResourceBundle bundle = getBundle( bundleName );
 			if( bundle != null ) {
-				message = bundle.getString( key );
+				try {
+					message = bundle.getString( msgKey );
+				} catch( MissingResourceException ex ) {
+					LOGGER.trace( "Failed to find bundle message", ex );
+					LOGGER.error( LOG_MESSAGE_NOT_FOUND, msgKey, bundleName );
+				}
+			} else {
+				LOGGER.error( LOG_BUNDLE_NOT_FOUND, bundleName );
 			}
 		}
-		return (message == null) ? "???" + key + "???" : MessageFormat.format(
+		return (message == null) ? "???" + msgKey + "???" : StringUtils.format(
 				message, args );
 	}
 

@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.avaryuon.commons.io.file;
+package com.avaryuon.fwk.javafx.collection;
+
+import com.avaryuon.commons.StringUtils;
+import com.avaryuon.fwk.javafx.scene.image.Icon;
 
 /**
- * Standard file extension.
+ * Icons collection .
  * 
  * @author Akyruu (akyruu@hotmail.com)
  * @version 0.1
  */
-public enum StandardFileExtension implements FileExtension {
-	/* VALUES ============================================================== */
-	PROPERTIES
-
+public class IconList extends ObservableListWrapper< Icon > {
 	/* STATIC FIELDS ======================================================= */
 	// Nothing here
 
@@ -35,5 +35,27 @@ public enum StandardFileExtension implements FileExtension {
 	// Nothing here
 
 	/* METHODS ============================================================= */
-	// Nothing here
+	/* Access -------------------------------------------------------------- */
+	/**
+	 * Adds a one (or more) new icon(s) from name and size(s).
+	 * 
+	 * @param name
+	 *            Icon's name.
+	 * @param sizes
+	 *            Icon sizes.
+	 * @return True if not blank and no errors, false otherwise.
+	 */
+	public boolean add( String name, int... sizes ) {
+		if( StringUtils.isBlank( name ) || (sizes.length == 0) ) {
+			return false;
+		}
+
+		boolean success = true;
+		for( int size : sizes ) {
+			if( !add( new Icon( name, size ) ) ) {
+				success = false;
+			}
+		}
+		return success;
+	}
 }

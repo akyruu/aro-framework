@@ -13,27 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.avaryuon.commons.io.file;
+package com.avaryuon.fwk.core.i18n;
 
 /**
- * Standard file extension.
+ * Interface for message keys enumerator.
  * 
  * @author Akyruu (akyruu@hotmail.com)
  * @version 0.1
  */
-public enum StandardFileExtension implements FileExtension {
-	/* VALUES ============================================================== */
-	PROPERTIES
-
+public interface MsgKey {
 	/* STATIC FIELDS ======================================================= */
 	// Nothing here
 
-	/* FIELDS ============================================================== */
-	// Nothing here
-
-	/* CONSTRUCTORS ======================================================== */
-	// Nothing here
-
 	/* METHODS ============================================================= */
-	// Nothing here
+	public default String key() {
+		Enum< ? > thisEnum = Enum.class.cast( this );
+		String name = thisEnum.name().toLowerCase();
+		return name.toLowerCase().replace( "_", "." );
+	}
+
+	public String bundleName();
 }

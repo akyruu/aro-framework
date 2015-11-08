@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.avaryuon.commons.io.file;
+package com.avaryuon.fwk;
+
+import javax.inject.Singleton;
 
 /**
- * Standard file extension.
+ * Context of ARO application.
  * 
  * @author Akyruu (akyruu@hotmail.com)
  * @version 0.1
  */
-public enum StandardFileExtension implements FileExtension {
-	/* VALUES ============================================================== */
-	PROPERTIES
-
+@Singleton
+public class AroContext {
 	/* STATIC FIELDS ======================================================= */
 	// Nothing here
 
@@ -32,7 +32,9 @@ public enum StandardFileExtension implements FileExtension {
 	// Nothing here
 
 	/* CONSTRUCTORS ======================================================== */
-	// Nothing here
+	AroContext() {
+		
+	}
 
 	/* METHODS ============================================================= */
 	// Nothing here

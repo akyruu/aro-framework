@@ -13,27 +13,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.avaryuon.commons.io.file;
+package com.avaryuon.fwk.view;
+
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
- * Standard file extension.
+ * View used for load FXML.
  * 
  * @author Akyruu (akyruu@hotmail.com)
  * @version 0.1
  */
-public enum StandardFileExtension implements FileExtension {
-	/* VALUES ============================================================== */
-	PROPERTIES
-
+public class View {
 	/* STATIC FIELDS ======================================================= */
 	// Nothing here
 
 	/* FIELDS ============================================================== */
-	// Nothing here
+	@Getter
+	@Setter(AccessLevel.PACKAGE)
+	private Parent root;
+	@Getter
+	@Setter(AccessLevel.PACKAGE)
+	private Scene scene;
+	@Setter(AccessLevel.PACKAGE)
+	private Object controller;
 
 	/* CONSTRUCTORS ======================================================== */
 	// Nothing here
 
 	/* METHODS ============================================================= */
-	// Nothing here
+	@SuppressWarnings("unchecked")
+	public < T > T getController() {
+		return (T) controller;
+	}
+
 }

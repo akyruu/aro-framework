@@ -13,25 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.avaryuon.commons.io.file;
+package com.avaryuon.fwk.core.bean.context.bound;
+
+import java.util.Map;
+
+import org.jboss.weld.context.BoundContext;
+
+import com.avaryuon.fwk.core.bean.context.ViewContext;
 
 /**
- * Standard file extension.
+ * <b>title</b>
+ * <p>
+ * description
+ * </p>
  * 
  * @author Akyruu (akyruu@hotmail.com)
  * @version 0.1
  */
-public enum StandardFileExtension implements FileExtension {
-	/* VALUES ============================================================== */
-	PROPERTIES
-
+public interface BoundViewContext extends ViewContext,
+		BoundContext< Map< String, Object >> {
 	/* STATIC FIELDS ======================================================= */
-	// Nothing here
-
-	/* FIELDS ============================================================== */
-	// Nothing here
-
-	/* CONSTRUCTORS ======================================================== */
 	// Nothing here
 
 	/* METHODS ============================================================= */

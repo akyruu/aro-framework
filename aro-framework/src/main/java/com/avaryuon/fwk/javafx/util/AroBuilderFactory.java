@@ -1,4 +1,4 @@
-package com.avaryuon.fwk.javafx.fxml;
+package com.avaryuon.fwk.javafx.util;
 
 import javafx.fxml.JavaFXBuilderFactory;
 import javafx.util.Builder;

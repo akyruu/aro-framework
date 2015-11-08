@@ -13,17 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.avaryuon.commons.io.file;
+package com.avaryuon.fwk;
+
+import com.avaryuon.fwk.core.i18n.MsgKey;
 
 /**
- * Standard file extension.
+ * Keys of ARO bundle.
  * 
  * @author Akyruu (akyruu@hotmail.com)
  * @version 0.1
  */
-public enum StandardFileExtension implements FileExtension {
+public enum AroMsgKeys implements MsgKey {
 	/* VALUES ============================================================== */
-	PROPERTIES
+	/* Application --------------------------------------------------------- */
+	APP_TITLE,
+
+	/* Common -------------------------------------------------------------- */
+	COMMON_ACTION_SEE, COMMON_ACTION_CANCEL, COMMON_ACTION_CLOSE;
 
 	/* STATIC FIELDS ======================================================= */
 	// Nothing here
@@ -35,5 +41,9 @@ public enum StandardFileExtension implements FileExtension {
 	// Nothing here
 
 	/* METHODS ============================================================= */
-	// Nothing here
+	/* Overriding - PropKey.class ------------------------------------------ */
+	@Override
+	public String bundleName() {
+		return "aro";
+	}
 }

@@ -15,7 +15,10 @@
  */
 package com.avaryuon.commons.reflect;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +46,13 @@ public final class ReflectionUtils {
 	}
 
 	/* METHODS ============================================================= */
+	/* Package ------------------------------------------------------------- */
+	public static String getPackageName( Class< ? > objClass ) {
+		return objClass.getPackage().getName();
+	}
+
 	/* Field --------------------------------------------------------------- */
+	/* Finding */
 	public static Field findField( Class< ? > objClass, String fieldName ) {
 		Field field = null;
 
@@ -67,6 +76,26 @@ public final class ReflectionUtils {
 		return field;
 	}
 
+	public static Collection< Field > findFields( Class< ? > objClass,
+			Class< ? extends Annotation > annotationType ) {
+		Collection< Field > annotedFields = new ArrayList<>();
+
+		if( objClass != null && !Object.class.equals( objClass ) ) {
+			for( Field field : objClass.getDeclaredFields() ) {
+				Annotation annotation = field
+						.getDeclaredAnnotation( annotationType );
+				if( annotation != null ) {
+					annotedFields.add( field );
+				}
+			}
+			annotedFields.addAll( findFields( objClass.getSuperclass(),
+					annotationType ) );
+		}
+
+		return annotedFields;
+	}
+
+	/* Value */
 	public static Object getValue( Object obj, Field field ) {
 		Object value = null;
 
@@ -82,4 +111,14 @@ public final class ReflectionUtils {
 		return value;
 	}
 
+	public static void setValue( Object obj, Field field, Object value ) {
+		if( field != null ) {
+			field.setAccessible( true );
+			try {
+				field.set( obj, value );
+			} catch( IllegalArgumentException | IllegalAccessException ex ) {
+				LOGGER.error( "", ex );
+			}
+		}
+	}
 }

@@ -13,37 +13,55 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.avaryuon.fwk.javafx;
+package com.avaryuon.fwk.core.bean.context.holder;
 
-import javafx.scene.Parent;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.jboss.weld.context.BoundContext;
+import org.jboss.weld.context.ManagedContext;
 
 /**
- * View used for load FXML.
+ * <b>title</b>
+ * <p>
+ * description
+ * </p>
  * 
  * @author Akyruu (akyruu@hotmail.com)
  * @version 0.1
  */
-public class View {
+public abstract class SimpleScopedHolder< C extends ManagedContext& BoundContext< Map< String, Object >>> {
 	/* STATIC FIELDS ======================================================= */
 	// Nothing here
 
 	/* FIELDS ============================================================== */
-	@Getter
-	@Setter(AccessLevel.PACKAGE)
-	private Parent root;
-	@Setter(AccessLevel.PACKAGE)
-	private Object controller;
+	private Map< String, Object > storage;
 
 	/* CONSTRUCTORS ======================================================== */
-	// Nothing here
-
-	/* METHODS ============================================================= */
-	@SuppressWarnings("unchecked")
-	public < T > T getController() {
-		return (T) controller;
+	public SimpleScopedHolder() {
+		storage = new HashMap< String, Object >();
 	}
 
+	/* METHODS ============================================================= */
+	/* Access -------------------------------------------------------------- */
+	protected abstract C getContext();
+
+	/* Life-cycle ---------------------------------------------------------- */
+	public void start() {
+		C context = getContext();
+		storage.clear();
+		context.associate( storage );
+		context.activate();
+	}
+
+	public void end() {
+		C context = getContext();
+		try {
+			context.invalidate();
+			context.deactivate();
+		} finally {
+			storage.clear();
+			context.dissociate( storage );
+		}
+	}
 }

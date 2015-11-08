@@ -15,6 +15,8 @@
  */
 package com.avaryuon.commons;
 
+import java.text.MessageFormat;
+
 /**
  * Contains utility methods for strings. Don't instantiate.
  * 
@@ -35,6 +37,14 @@ public final class StringUtils {
 
 	/* METHODS ============================================================= */
 	/* Validation ---------------------------------------------------------- */
+	public static boolean isEmpty( String string ) {
+		return (string == null) || string.isEmpty();
+	}
+
+	public static boolean isNotEmpty( String string ) {
+		return !isEmpty( string );
+	}
+
 	public static boolean isBlank( String string ) {
 		return (string == null) || string.trim().isEmpty();
 	}
@@ -48,4 +58,58 @@ public final class StringUtils {
 		return (str1 == str2) || ((str1 != null) && str1.equals( str2 ));
 	}
 
+	/* Format -------------------------------------------------------------- */
+	/**
+	 * Format a non-null string (escape simple quote character).
+	 * 
+	 * @see java.text.MessageFormat#format.
+	 * 
+	 * @param pattern
+	 *            String to format.
+	 * @param args
+	 *            Arguments for formats pattern.
+	 * 
+	 * @return String or null.
+	 */
+	public static String format( String pattern, Object... args ) {
+		return (pattern == null) ? null : MessageFormat.format(
+				pattern.replace( "'", "''" ), args );
+	}
+
+	/* Inserts ------------------------------------------------------------- */
+	/**
+	 * <b>Inserts string between from/to indexes.<b>
+	 * <p>
+	 * For example, insert("Hello world !", "me", 6, 11 ) will return
+	 * "Hello me !".
+	 * </p>
+	 * 
+	 * @param string
+	 *            Original string.
+	 * @param insert
+	 *            String to insert.
+	 * @param from
+	 *            Insertion point index (use -1 for replace all the start).
+	 * @param to
+	 *            Last insertion point index (use -1 for replace all the end).
+	 * 
+	 * @return String or null if the original string is empty.
+	 */
+	public static String insert( String string, String insert, int from, int to ) {
+		if( StringUtils.isEmpty( string ) ) {
+			return string;
+		}
+
+		String result = "";
+		if( (from >= 1) && (from < string.length()) ) {
+			result += string.substring( 0, from );
+		}
+		if( insert != null ) {
+			result += insert;
+		}
+		if( (to >= 1) && (to < string.length()) ) {
+			result += string.substring( to );
+		}
+		return result;
+	}
 }

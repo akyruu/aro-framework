@@ -13,18 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.avaryuon.commons.io.file;
+package com.avaryuon.fwk.core.bean.context.bound;
+
+import java.lang.annotation.Annotation;
+
+import com.avaryuon.fwk.core.bean.context.ViewScoped;
+import com.avaryuon.fwk.core.bean.context.cache.SimpleScopedCache;
+import com.avaryuon.fwk.core.bean.context.cache.ViewScopedCache;
 
 /**
- * Standard file extension.
+ * Bound view context implementation.
  * 
  * @author Akyruu (akyruu@hotmail.com)
  * @version 0.1
  */
-public enum StandardFileExtension implements FileExtension {
-	/* VALUES ============================================================== */
-	PROPERTIES
-
+public class BoundViewContextImpl extends SimpleBoundContext implements
+		BoundViewContext {
 	/* STATIC FIELDS ======================================================= */
 	// Nothing here
 
@@ -32,8 +36,24 @@ public enum StandardFileExtension implements FileExtension {
 	// Nothing here
 
 	/* CONSTRUCTORS ======================================================== */
-	// Nothing here
+	public BoundViewContextImpl( String contextId ) {
+		super( contextId, BoundViewContext.class );
+	}
 
 	/* METHODS ============================================================= */
-	// Nothing here
+	/**
+	 * @see com.avaryuon.fwk.core.bean.context.bound.SimpleBoundContext#getScope()
+	 */
+	@Override
+	public Class< ? extends Annotation > getScope() {
+		return ViewScoped.class;
+	}
+	
+	/**
+	 * @see com.avaryuon.fwk.core.bean.context.bound.SimpleBoundContext#getCache()
+	 */
+	@Override
+	public SimpleScopedCache getCache() {
+		return ViewScopedCache.instance();
+	}
 }

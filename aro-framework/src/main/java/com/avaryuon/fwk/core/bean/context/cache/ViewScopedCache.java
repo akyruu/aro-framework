@@ -13,20 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.avaryuon.commons.io.file;
+package com.avaryuon.fwk.core.bean.context.cache;
 
 /**
- * Standard file extension.
+ * Cache view scoped implementation.
  * 
  * @author Akyruu (akyruu@hotmail.com)
  * @version 0.1
  */
-public enum StandardFileExtension implements FileExtension {
-	/* VALUES ============================================================== */
-	PROPERTIES
-
+public class ViewScopedCache extends SimpleScopedCache {
 	/* STATIC FIELDS ======================================================= */
-	// Nothing here
+	/* Singleton ----------------------------------------------------------- */
+	private static ViewScopedCache instance;
 
 	/* FIELDS ============================================================== */
 	// Nothing here
@@ -35,5 +33,12 @@ public enum StandardFileExtension implements FileExtension {
 	// Nothing here
 
 	/* METHODS ============================================================= */
-	// Nothing here
+	/* Singleton ----------------------------------------------------------- */
+	public static ViewScopedCache instance() {
+		if( instance == null ) {
+			instance = new ViewScopedCache();
+		}
+		return instance;
+	}
+
 }

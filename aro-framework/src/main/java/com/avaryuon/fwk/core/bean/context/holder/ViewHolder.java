@@ -13,27 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.avaryuon.commons.io.file;
+package com.avaryuon.fwk.core.bean.context.holder;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import com.avaryuon.fwk.core.bean.context.bound.BoundViewContext;
 
 /**
- * Standard file extension.
+ * Holder view scoped implementation.
  * 
  * @author Akyruu (akyruu@hotmail.com)
  * @version 0.1
  */
-public enum StandardFileExtension implements FileExtension {
-	/* VALUES ============================================================== */
-	PROPERTIES
-
+@Singleton
+public class ViewHolder extends SimpleScopedHolder< BoundViewContext > {
 	/* STATIC FIELDS ======================================================= */
 	// Nothing here
 
 	/* FIELDS ============================================================== */
-	// Nothing here
+	@Inject
+	private BoundViewContext context;
 
 	/* CONSTRUCTORS ======================================================== */
 	// Nothing here
 
 	/* METHODS ============================================================= */
-	// Nothing here
+	/* Overriding - SimpleScopedHolder.class ------------------------------- */
+	/**
+	 * @see com.avaryuon.fwk.core.bean.context.holder.SimpleScopedHolder#getContext()
+	 */
+	@Override
+	protected BoundViewContext getContext() {
+		return context;
+	}
+
 }
