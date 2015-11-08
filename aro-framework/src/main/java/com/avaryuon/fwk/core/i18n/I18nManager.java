@@ -108,8 +108,7 @@ public class I18nManager {
 		return bundle;
 	}
 
-	private ResourceBundle getBundleImpl( String bundleName )
-			throws MissingResourceException {
+	private ResourceBundle getBundleImpl( String bundleName ) {
 		ResourceBundle bundle = zipBundle;
 		if( bundle == null ) {
 			ClassLoader loader = resourceMgr.getClassLoader();

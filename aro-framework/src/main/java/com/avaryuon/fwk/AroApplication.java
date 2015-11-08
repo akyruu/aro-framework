@@ -178,9 +178,7 @@ public abstract class AroApplication extends Application {
 			title.addListener( ( observable, oldValue, newValue ) -> mainStage
 					.setTitle( newValue ) );
 			mainStage.getIcons().addAll( icons );
-			mainStage.setOnCloseRequest( event -> {
-				close();
-			} );
+			mainStage.setOnCloseRequest( event -> close() );
 
 			// Start and show
 			viewHolder.start();

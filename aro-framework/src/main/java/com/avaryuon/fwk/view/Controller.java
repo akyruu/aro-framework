@@ -35,7 +35,7 @@ public class Controller {
 
 	/* CONSTRUCTORS ======================================================== */
 	@FXML
-	private final void initialize() {
+	protected final void initialize() {
 		onInit();
 	}
 

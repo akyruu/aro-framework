@@ -53,6 +53,7 @@ public abstract class SimpleBoundContext extends
 
 	/* METHODS ============================================================= */
 	/* Overriding - BoundContext.class ------------------------------------- */
+	@Override
 	public abstract Class< ? extends Annotation > getScope();
 
 	public abstract SimpleScopedCache getCache();

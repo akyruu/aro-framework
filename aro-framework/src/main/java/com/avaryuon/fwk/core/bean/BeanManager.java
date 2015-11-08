@@ -65,7 +65,10 @@ public class BeanManager {
 
 		// Initialize injection fields
 		weld = new Weld();
-		weld.addExtension( extension = new BeanExtension() );
+		
+		extension = new BeanExtension();
+		weld.addExtension( extension );
+		
 		container = weld.initialize();
 
 		// Add shutdown treatment

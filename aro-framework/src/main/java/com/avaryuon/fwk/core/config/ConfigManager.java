@@ -161,12 +161,11 @@ public class ConfigManager {
 			Properties properties = propertyGroups.get( realGroup );
 			propertyValue = (properties == null) ? defaultValue : properties
 					.getProperty( name, defaultValue );
-			if( propertyValue != null ) {
-				if( propertyValue.startsWith( BUNDLE_KEY_PREFIX ) ) {
-					String msgKey = propertyValue.substring( BUNDLE_KEY_PREFIX
-							.length() );
-					propertyValue = getI18nMgr().getBundleMessage( msgKey );
-				}
+			if( (propertyValue != null)
+					&& propertyValue.startsWith( BUNDLE_KEY_PREFIX ) ) {
+				String msgKey = propertyValue.substring( BUNDLE_KEY_PREFIX
+						.length() );
+				propertyValue = getI18nMgr().getBundleMessage( msgKey );
 			}
 		}
 

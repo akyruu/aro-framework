@@ -70,11 +70,7 @@ public class SimpleScopedCache {
 	public boolean addItemIfActive( final ThreadLocal< ? > item ) {
 		final List< SimpleScopedItem > cache = lookup.get();
 		if( cache != null ) {
-			cache.add( new SimpleScopedItem() {
-				public void invalidate() {
-					item.remove();
-				}
-			} );
+			cache.add( ( ) -> item.remove() );
 			return true;
 		}
 		return false;

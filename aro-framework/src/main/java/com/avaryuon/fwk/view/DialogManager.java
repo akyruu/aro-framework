@@ -92,7 +92,7 @@ public class DialogManager {
 
 	public void open( Class< ? extends Dialog > dialogClass, String title,
 			Modality modality ) {
-		Dialog dialog = buildDialog( dialogClass );
+		Dialog dialog = buildDialog( dialogClass, title, modality );
 		if( dialog != null ) {
 			dialog.openAndWait();
 		}
